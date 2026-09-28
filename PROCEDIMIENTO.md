@@ -40,6 +40,55 @@ as --version
 gdb --version
 ```
 
+### Instalar gdb-dashboard
+
+GDB por sí solo entrega la información de a pedazos: para ver los registros hay que pedir
+`info registers`, para ver la memoria `x/4gx $rsp`, y cada cosa aparece suelta en el
+chorro de texto de la terminal. **gdb-dashboard** es un archivo de configuración que
+reorganiza todo eso en paneles fijos —registros, desensamblado, memoria, pila y código
+fuente— que se redibujan solos en cada parada.
+
+Es un `.gdbinit` escrito en Python, así que primero verificamos que nuestro GDB tenga
+soporte para Python:
+
+```bash
+gdb -batch -ex "python print('Python OK en GDB')"
+```
+
+Si imprime el mensaje, lo instalamos en la carpeta personal:
+
+```bash
+curl -fsSL -o ~/.gdbinit https://raw.githubusercontent.com/cyrus-and/gdb-dashboard/master/.gdbinit
+wc -l ~/.gdbinit
+```
+
+Tiene que reportar alrededor de **2389 líneas**. Si dice `0`, la descarga falló.
+
+> El repositorio del profesor incluye un `setup.sh` que instala el archivo en la carpeta
+> del proyecto en lugar de la carpeta personal. **Ese método no funciona**: GDB se niega a
+> cargar automáticamente un `.gdbinit` que esté en el directorio actual, por razones de
+> seguridad, y el resultado es que el `setup.sh` parece haber andado pero después no
+> aparece ningún panel. En la carpeta personal se carga siempre.
+
+Aprovechamos para desactivar el aviso de *debuginfod*, que si no interrumpe cada sesión
+preguntando si queremos descargar símbolos desde internet (no hacen falta: nuestro
+binario ya trae los suyos):
+
+```bash
+echo "set debuginfod enabled off" >> ~/.gdbinit
+```
+
+Opcionalmente, para que el código y el assembly salgan coloreados por sintaxis:
+
+```bash
+sudo apt install python3-pygments
+```
+
+Tiene que ser por `apt` y no por `pip`: gdb-dashboard corre sobre el **Python embebido en
+GDB**, que es el del sistema, así que un entorno virtual quedaría en un intérprete que GDB
+nunca mira. De todos modos es opcional — sin pygments el dashboard funciona igual, solo
+que sin colores.
+
 ## 2. Clonar el material del profesor
 
 ```bash
@@ -94,21 +143,29 @@ salida. Por eso lo consultamos con `echo $?`.
 gdb ./program
 ```
 
-Si GDB pregunta si querés habilitar *debuginfod*, contestá **`n`**: descarga símbolos
-desde internet y acá no hacen falta, porque nuestro binario ya trae los suyos.
+Si el dashboard quedó bien instalado, el prompt no es el `(gdb)` de siempre sino
+**`>>>`**. Esa es la señal de que cargó.
 
-Para que no vuelva a preguntar nunca más:
-
-```bash
-echo "set debuginfod enabled off" >> ~/.gdbinit
-```
+Al abrirse todavía no se ve ningún panel, y es lo esperado: se dibujan cuando el programa
+**se detiene** en algún punto, y antes del `run` no hay nada que mostrar.
 
 > **Importante:** dentro de GDB hay que escribir **un comando por línea**, apretando Enter
-> y esperando la respuesta antes del siguiente. Si se pegan varias líneas de una vez, GDB
-> toma el bloque entero como un solo comando y falla. Tampoco acepta comentarios con `#`
-> en la misma línea del comando.
+> y esperando la respuesta antes de tipear el siguiente. Si se pegan varias líneas de una
+> vez, GDB toma el bloque entero como un solo comando y falla con un error confuso.
+> Tampoco acepta comentarios con `#` en la misma línea del comando: los `#` que aparecen
+> en este documento son explicaciones, no se escriben.
 
-Ponemos los dos puntos de interrupción y arrancamos:
+Antes de arrancar le pedimos al dashboard que vigile la cima de la pila, que es justo lo
+que queremos observar en toda esta parte:
+
+```
+dashboard memory watch $rsp 32
+```
+
+Con eso el panel **Memory** muestra 32 bytes desde `%rsp` y los actualiza en cada paso,
+sin necesidad de escribir `x/4gx $rsp` a mano cada vez.
+
+Ponemos los dos puntos de interrupción y arrancamos, un comando por vez:
 
 ```
 break _start
@@ -117,9 +174,13 @@ run
 info registers rsp rbp rip
 ```
 
+Ahí se dibuja el dashboard completo: **Assembly**, **Breakpoints**, **Expressions**,
+**History**, **Memory**, **Registers** y **Source**. Toda la información que antes había
+que pedir comando por comando queda a la vista en simultáneo y se refresca sola.
+
 ![Breakpoints y registros iniciales](capturas/gdb-inicio.png)
 
-En este momento `%rbp` vale **0**, y tiene sentido: `_start` es el punto de entrada del
+Mirando el panel **Registers**, en este momento `%rbp` vale **0**, y tiene sentido: `_start` es el punto de entrada del
 proceso, no lo llamó ninguna función, así que no hay ningún marco anterior al que
 anclarse. El valor de `%rsp` acá es la referencia contra la que vamos a comparar todo lo
 que siga.
@@ -177,7 +238,9 @@ Los primeros tres `stepi` ejecutan el prólogo completo —`pushq %rbp`, `movq %
 
 **Cómo se lee `x/4gx $rsp`:** examinar (`x`) 4 elementos de 8 bytes (`g`, de *giant
 word*) en hexadecimal (`x`), empezando desde donde apunta `%rsp`. GDB los imprime de a
-dos por línea.
+dos por línea. Con el dashboard, el panel **Memory** ya venía mostrando esto mismo y
+actualizándose en cada `stepi`, así que se puede seguir cómo se va llenando el marco sin
+volver a pedirlo.
 
 Lo que queda armado:
 
