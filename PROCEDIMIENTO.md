@@ -86,7 +86,7 @@ Dos detalles de los comandos:
 El programa no imprime nada por pantalla: devuelve **30** (que es 10 + 20) como código de
 salida. Por eso lo consultamos con `echo $?`.
 
-![Compilación y ejecución](capturas/01-compilacion.png)
+![Compilación y ejecución](capturas/compilacion.png)
 
 ## 4. Abrir el depurador
 
@@ -159,7 +159,7 @@ O sea que podemos señalar el número en la memoria y el mismo número en el des
 La dirección de retorno deja de ser un concepto del apunte y pasa a ser un dato concreto
 en una posición que se puede ubicar.
 
-![Dirección de retorno](capturas/02-direccion-retorno.png)
+![Dirección de retorno](capturas/direccion-retorno.png)
 
 ## 7. El prólogo arma el marco y entran los datos
 
@@ -194,7 +194,7 @@ el que llamó, los **negativos** son variables locales de esta función.
 En la captura se ven los valores `0x14` y `0xa` ya escritos: es el momento exacto en que
 los argumentos pasan de los registros a la memoria del marco.
 
-![Marco armado con los datos](capturas/03-frame-y-locales.png)
+![Marco armado con los datos](capturas/frame-y-locales.png)
 
 ## 8. El cuerpo, el epílogo y el retorno
 
@@ -218,7 +218,7 @@ dirección que había puesto el `call` y salta ahí.
 Al final, `%rip` vale `0x401030` = `_start+19` —exactamente el número del paso 6— y
 `%rsp` vuelve a su valor inicial.
 
-![Retorno y simetría](capturas/04-retorno-simetria.png)
+![Retorno y simetría](capturas/retorno-simetria.png)
 
 El recorrido completo de `%rsp` durante toda la llamada:
 
@@ -279,7 +279,7 @@ Devuelve `0000000000000000 T suma`. La **`T`** significa que el símbolo está e
 sección `.text` (código) y es global, así que el enlazador lo puede encontrar desde
 `main.o`. Si apareciera una `U` (*undefined*), faltaría la directiva `.globl` en el `.s`.
 
-![Compilación de C + ASM](capturas/05-compilacion-c-asm.png)
+![Compilación de C + ASM](capturas/compilacion-c-asm.png)
 
 ## 10. Cómo prepara el compilador la llamada
 
@@ -307,7 +307,7 @@ Ninguna de esas instrucciones las escribió nadie: es el compilador cumpliendo l
 AMD64 ABI por su cuenta. Ese contrato es justamente lo que permite que dos archivos
 compilados por separado —uno en C y otro en ensamblador— puedan entenderse.
 
-![Desensamblado de main](capturas/06-disassemble-main.png)
+![Desensamblado de main](capturas/disassemble-main.png)
 
 Si además miramos `info locals`, se ve que `resultado` tiene un número enorme sin
 sentido: está declarada pero todavía no se le asignó nada, así que muestra lo que había
@@ -340,7 +340,7 @@ llama a ninguna otra rutina ni usa variables locales, así que no necesita marco
 Contrasta con `calc_sum` de la Parte A, que sí lo arma. **El prólogo no es un ritual
 obligatorio de toda función, sino una herramienta que se usa cuando hace falta.**
 
-![Dentro de suma](capturas/07-dentro-de-suma.png)
+![Dentro de suma](capturas/dentro-de-suma.png)
 
 ## 12. El valor de retorno
 
@@ -356,7 +356,7 @@ info registers rip rsp rax
 recupera el valor que tenía antes de la llamada. La instrucción siguiente de `main` pasa
 `%rax` a la variable `resultado`, y se cierra el ciclo.
 
-![Resultado y retorno](capturas/08-resultado.png)
+![Resultado y retorno](capturas/resultado.png)
 
 ---
 
