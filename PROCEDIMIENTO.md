@@ -117,6 +117,8 @@ run
 info registers rsp rbp rip
 ```
 
+![Breakpoints y registros iniciales](capturas/gdb-inicio.png)
+
 En este momento `%rbp` vale **0**, y tiene sentido: `_start` es el punto de entrada del
 proceso, no lo llamó ninguna función, así que no hay ningún marco anterior al que
 anclarse. El valor de `%rsp` acá es la referencia contra la que vamos a comparar todo lo
@@ -159,8 +161,6 @@ O sea que podemos señalar el número en la memoria y el mismo número en el des
 La dirección de retorno deja de ser un concepto del apunte y pasa a ser un dato concreto
 en una posición que se puede ubicar.
 
-![Dirección de retorno](capturas/direccion-retorno.png)
-
 ## 7. El prólogo arma el marco y entran los datos
 
 ```
@@ -194,8 +194,6 @@ el que llamó, los **negativos** son variables locales de esta función.
 En la captura se ven los valores `0x14` y `0xa` ya escritos: es el momento exacto en que
 los argumentos pasan de los registros a la memoria del marco.
 
-![Marco armado con los datos](capturas/frame-y-locales.png)
-
 ## 8. El cuerpo, el epílogo y el retorno
 
 ```
@@ -217,8 +215,6 @@ dirección que había puesto el `call` y salta ahí.
 
 Al final, `%rip` vale `0x401030` = `_start+19` —exactamente el número del paso 6— y
 `%rsp` vuelve a su valor inicial.
-
-![Retorno y simetría](capturas/retorno-simetria.png)
 
 El recorrido completo de `%rsp` durante toda la llamada:
 
@@ -307,8 +303,6 @@ Ninguna de esas instrucciones las escribió nadie: es el compilador cumpliendo l
 AMD64 ABI por su cuenta. Ese contrato es justamente lo que permite que dos archivos
 compilados por separado —uno en C y otro en ensamblador— puedan entenderse.
 
-![Desensamblado de main](capturas/disassemble-main.png)
-
 Si además miramos `info locals`, se ve que `resultado` tiene un número enorme sin
 sentido: está declarada pero todavía no se le asignó nada, así que muestra lo que había
 antes en esa posición de memoria.
@@ -355,8 +349,6 @@ info registers rip rsp rax
 `%rax` = `0x23` = **35** = 10 + 25. Después del `ret`, `%rip` vuelve a `main+47` y `%rsp`
 recupera el valor que tenía antes de la llamada. La instrucción siguiente de `main` pasa
 `%rax` a la variable `resultado`, y se cierra el ciclo.
-
-![Resultado y retorno](capturas/resultado.png)
 
 ---
 
