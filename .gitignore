@@ -1,0 +1,23 @@
+# Clon del repo de cátedra: es material de consulta, no parte del TP.
+# Si se commitea desde adentro de este repo, git lo registra como un
+# submódulo roto (gitlink) en vez de como archivos.
+stackframe/
+**/stackframe/
+
+# Objetos y binarios de compilación
+*.o
+*.so
+*.out
+program
+programa
+programa2
+
+# Historial y configuración local de GDB
+.gdb_history
+.gdbinit
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
