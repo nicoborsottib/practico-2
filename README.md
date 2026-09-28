@@ -47,26 +47,26 @@ GDB, mostrando el estado del stack antes, durante y después de cada llamada.
 
 ```
 practico-2/
-├── README.md                    este documento
-├── CONSIGNA.md                  hoja de ruta: la consigna traducida a etapas
-├── GUIA.md                      stack frames desde cero y material del profesor reordenado
-└── procedimiento/
-    ├── PARTE1/                  stack frames en x86-64 con GDB
-    └── PARTE2/                  argumentos por pila (7mo y 8vo parámetro)
+├── README.md              este documento
+├── CONSIGNA.md            qué pide el TP y en qué orden abordarlo
+├── GUIA.md                la teoría: stack frames explicados desde cero
+├── PROCEDIMIENTO.md       paso a paso de lo que fuimos haciendo, con capturas
+└── capturas/              las imágenes referenciadas por PROCEDIMIENTO.md
 ```
 
 | Documento | Para qué sirve |
 |---|---|
-| [`CONSIGNA.md`](CONSIGNA.md) | Qué pide el TP y en qué orden abordarlo: los requisitos desglosados y las diez etapas de trabajo |
-| [`GUIA.md`](GUIA.md) | Material de estudio: la teoría de stack frames explicada desde cero y los ejemplos del profesor reordenados en secuencia |
+| [`CONSIGNA.md`](CONSIGNA.md) | Los requisitos del trabajo desglosados y el plan de etapas |
+| [`GUIA.md`](GUIA.md) | Material de estudio: la teoría de stack frames y los ejemplos del profesor reordenados en secuencia |
+| [`PROCEDIMIENTO.md`](PROCEDIMIENTO.md) | El registro del trabajo realizado, parte por parte, con las capturas que verifican cada resultado |
 
-Cada parte documenta lo realizado en su propio `README.md`, con las capturas de pantalla
-que verifican los resultados obtenidos.
+El procedimiento se lleva en **un solo documento**, al que se le van agregando las partes
+a medida que avanzamos.
 
 | Parte | Tema | Estado |
 |---|---|---|
-| [Parte 1](procedimiento/PARTE1/) | Anatomía del stack frame: prólogo, epílogo, dirección de retorno y paso de argumentos por registros | en curso |
-| [Parte 2](procedimiento/PARTE2/) | Paso de argumentos por la pila cuando se superan los seis registros de la ABI | pendiente |
+| Parte 1 | Anatomía del stack frame: prólogo, epílogo, dirección de retorno y paso de argumentos por registros | terminada |
+| Parte 2 | Paso de argumentos por la pila cuando se superan los seis registros de la ABI | pendiente |
 
 ## Conclusiones
 
